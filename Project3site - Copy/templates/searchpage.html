@@ -1,0 +1,115 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PokeSearch</title>
+  <!-- Include any CSS stylesheets or libraries here -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Database Search</h1>
+    <form id="searchForm">
+      <input type="text" id="searchInput" placeholder="Enter your search query...">
+      <button type="button" onclick="search()">Search</button>
+    </form>
+    <div id="searchResults">
+      {% if results %}
+        <ul>
+          {% for item in results %}
+            <li>Name: {{ item.Name }}</li>
+            <li>Number: {{ item.Number }}</li>
+            <li>Type 1: {{ item.Type1 }}</li>
+            <li>Type 2: {{ item.Type2 }}</li>
+            <li>HP: {{ item.HP }}</li>
+            <li>Attack: {{ item.Attack }}</li>
+            <li>Defense: {{ item.Defense }}</li>
+            <li>Special Attack: {{ item.Sp_Attack }}</li>
+            <li>Special Defense: {{ item.Sp_Defense }}</li>
+            <li>Speed: {{ item.Speed }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No results found.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    function search() {
+      var query = document.getElementById('searchInput').value;
+      var url = '/search?query=' + encodeURIComponent(query);
+
+      // Update window location to reload the page with the new URL
+      window.location.href = url;
+
+      // Send AJAX request to Flask API with updated URL
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var results = JSON.parse(xhr.responseText);
+          displayResults(results);
+        }
+      };
+      xhr.send();
+    }
+
+    function displayResults(results) {
+      var container = document.getElementById('searchResults');
+      container.innerHTML = '';
+
+      if (results.length === 0) {
+        container.innerHTML = 'No results found.';
+        return;
+      }
+
+      var resultList = document.createElement('ul');
+      results.forEach(function(item) {
+        var listItem = document.createElement('li');
+        listItem.textContent = item.Name;
+        resultList.appendChild(listItem);
+        
+        var listItem2 = document.createElement('li');
+        listItem2.textContent = item.Number;
+        resultList.appendChild(listItem2);
+        
+        var listItem3 = document.createElement('li');
+        listItem3.textContent = 'Type 1: ' + item.Type1;
+        resultList.appendChild(listItem3);
+        
+        var listItem4 = document.createElement('li');
+        listItem4.textContent = 'Type 2: ' + item.Type2;
+        resultList.appendChild(listItem4);
+        
+        var listItem5 = document.createElement('li');
+        listItem5.textContent = 'HP: ' + item.HP;
+        resultList.appendChild(listItem5);
+        
+        var listItem6 = document.createElement('li');
+        listItem6.textContent = 'Attack: ' + item.Attack;
+        resultList.appendChild(listItem6);
+        
+        var listItem7 = document.createElement('li');
+        listItem7.textContent = 'Defense: ' + item.Defense;
+        resultList.appendChild(listItem7);
+        
+        var listItem8 = document.createElement('li');
+        listItem8.textContent = 'Special Attack: ' + item.Sp_Attack;
+        resultList.appendChild(listItem8);
+        
+        var listItem9 = document.createElement('li');
+        listItem9.textContent = 'Special Defense: ' + item.Sp_Defense;
+        resultList.appendChild(listItem9);
+        
+        var listItem10 = document.createElement('li');
+        listItem10.textContent = 'Speed: ' + item.Speed;
+        resultList.appendChild(listItem10);
+      });
+      container.appendChild(resultList);
+    }
+
+  </script>
+</body>
+</html>
